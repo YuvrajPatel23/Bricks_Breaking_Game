@@ -288,6 +288,7 @@ class BricksBreakingGame extends FlameGame with DragCallbacks {
 
       grid[row1][col1] = brick2;
       grid[row2][col2] = brick1;
+      validateGrid();
 
       final matchedPoints = getMatchedPositions();
       if (matchedPoints.isNotEmpty) {
