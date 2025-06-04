@@ -15,8 +15,9 @@ class Ball extends CircleComponent {
   Ball({
     required super.position,
     required this.velocity,
+    required Vector2 screenSize
   }) : super(
-    radius: GameConfig.ballRadius,
+    radius: GameConfig.ballRadius(screenSize),
     anchor: Anchor.center,
     paint: Paint()..color = GameConfig.ballColor,
   );

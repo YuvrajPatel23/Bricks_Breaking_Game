@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import '../config.dart';
 
 class Bat extends RectangleComponent {
-  Bat({required super.position})
+  Bat({required super.position, required Vector2 screenSize})
       : super(
-    size: Vector2(GameConfig.batWidth, GameConfig.batHeight),
+    size: GameConfig.batSize(screenSize),
     anchor: Anchor.center,
-    paint: Paint()
-      ..color = GameConfig.batColor,
+    paint: Paint()..color = GameConfig.batColor,
   );
 }

@@ -12,10 +12,6 @@ class GameConfig {
   static const int lives = 3;
   static const int brickPoints = 10;
 
-  // Sizes
-  static const double ballRadius = 12.0;
-  static Vector2 brickSize = Vector2(80, 30);
-
   // Colors
   static const Color ballColor = Colors.blue;
   static const Color batColor = Colors.green;
@@ -30,4 +26,16 @@ class GameConfig {
   // Level configuration
   static const int totalLevels = 3;
   static const double levelCompletionFireworkCount = 50;
+
+  // Sizes
+  static Vector2 brickSize(Vector2 screenSize) {
+    final width = (screenSize.x * 0.9) / 8;  // 90% of screen width divided by 8 columns
+    final height = screenSize.y * 0.05;      // 5% of screen height
+    return Vector2(width, height);
+  }
+  // static const double ballRadius = 12.0;
+  // static Vector2 brickSize = Vector2(80, 30);
+  static double ballRadius(Vector2 screenSize) => screenSize.y * 0.02;
+  static Vector2 _brickSize(Vector2 screenSize) => Vector2(screenSize.x / 8, screenSize.y * 0.05);
+  static Vector2 batSize(Vector2 screenSize) => Vector2(screenSize.x * 0.3, screenSize.y * 0.03);
 }
