@@ -12,57 +12,7 @@ import 'components/bat.dart';
 import 'components/brick.dart';
 import 'components/play_area.dart';
 import 'systems/collision.dart';
-
-class Level {
-  final int number;
-  final List<List<int>> brickLayout;
-  final String description;
-
-
-  Level({
-    required this.number,
-    required this.brickLayout,
-    required this.description,
-  });
-}
-
-class LevelManager {
-  static List<Level> get levels => [
-    Level(
-      number: 1,
-      description: "Basic Pattern",
-      brickLayout: [
-        [1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 2, 2, 2, 2, 2, 2, 1],
-        [1, 2, 3, 3, 3, 3, 2, 1],
-        [1, 2, 2, 2, 2, 2, 2, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1],
-      ],
-    ),
-    Level(
-      number: 2,
-      description: "Diamond Formation",
-      brickLayout: [
-        [0, 0, 0, 3, 3, 0, 0, 0],
-        [0, 0, 3, 2, 2, 3, 0, 0],
-        [0, 3, 2, 1, 1, 2, 3, 0],
-        [3, 2, 1, 0, 0, 1, 2, 3],
-        [3, 2, 1, 0, 0, 1, 2, 3],
-      ],
-    ),
-    Level(
-      number: 3,
-      description: "Hardcore Challenge",
-      brickLayout: [
-        [4, 4, 4, 4, 4, 4, 4, 4],
-        [3, 0, 3, 0, 0, 3, 0, 3],
-        [2, 2, 0, 2, 2, 0, 2, 2],
-        [1, 0, 1, 0, 0, 1, 0, 1],
-        [3, 3, 0, 3, 3, 0, 3, 3],
-      ],
-    ),
-  ];
-}
+import 'systems/level.dart';
 
 class BrickBreakerGame extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents, TapDetector, PanDetector {
@@ -103,10 +53,13 @@ class BrickBreakerGame extends FlameGame
     collisionSystem = CollisionSystem(this);
 
     // Game area
-    add(PlayArea()..size = size);
+    add(PlayArea());
 
     // Create player bat
-    bat = Bat(position: Vector2(size.x / 2, size.y - 50));
+    bat = Bat(
+      position: Vector2(size.x / 2, size.y - 50),
+      screenSize: size,
+    );
     add(bat);
 
     // Create ball (initially stationary)
@@ -163,31 +116,42 @@ class BrickBreakerGame extends FlameGame
     ball = Ball(
       position: Vector2(bat.position.x, bat.position.y - 30),
       velocity: Vector2.zero(),
+      screenSize: size,
     );
     add(ball!);
     _isBallLaunched = false;
   }
 
   void _createBricks(List<List<int>> layout) {
+    final brickSize = GameConfig.brickSize(size);
+    final brickPadding = size.x * 0.015;  // Reduced padding
+    final rowHeight = brickSize.y + brickPadding;
+    final startY = 50.0;  // Start lower to avoid top cutoff
+
     final rows = layout.length;
-    final rowHeight = GameConfig.brickSize.y + brickPadding;
-    final startY = 100.0;
 
     for (int row = 0; row < rows; row++) {
       final columns = layout[row].length;
-      final totalBrickWidth = columns * GameConfig.brickSize.x;
+      final totalBrickWidth = columns * brickSize.x;
       final totalPadding = (columns - 1) * brickPadding;
       final startX = (size.x - (totalBrickWidth + totalPadding)) / 2;
+
+      // Ensure bricks stay within screen bounds
+      final minX = brickSize.x / 2;
+      final maxX = size.x - brickSize.x / 2;
 
       for (int col = 0; col < columns; col++) {
         final strength = layout[row][col];
         if (strength > 0) {
+          double xPos = startX + col * (brickSize.x + brickPadding) + brickSize.x / 2;
+
+          // Clamp position within screen bounds
+          xPos = xPos.clamp(minX, maxX);
+
           add(Brick(
-            position: Vector2(
-              startX + col * (GameConfig.brickSize.x + brickPadding) + GameConfig.brickSize.x / 2,
-              startY + row * rowHeight,
-            ),
+            position: Vector2(xPos, startY + row * rowHeight),
             hitsRequired: strength,
+            screenSize: size,
           ));
         }
       }
@@ -334,8 +298,6 @@ class BrickBreakerGame extends FlameGame
     levelNotifier.value = currentLevel;
   }
 
-  // ... existing touch and keyboard controls ...
-
   // Universal touch controls
   @override
   void onPanStart(DragStartInfo info) {
@@ -348,10 +310,10 @@ class BrickBreakerGame extends FlameGame
   @override
   void onPanUpdate(DragUpdateInfo info) {
     if (!_isGameOver) {
-      final touchX = _getTouchX(info);
-      final deltaX = touchX - _touchStartX;
+      final touchPosition = info.eventPosition.global;
 
-      bat.position.x = (_batStartX + deltaX).clamp(
+      // Move bat to touch position
+      bat.position.x = touchPosition.x.clamp(
         bat.size.x / 2,
         size.x - bat.size.x / 2,
       );

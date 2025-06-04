@@ -13,8 +13,9 @@ class Brick extends RectangleComponent {
   Brick({
     required super.position,
     required this.hitsRequired,
+    required Vector2 screenSize,
   }) : super(
-    size: GameConfig.brickSize,
+    size: GameConfig.brickSize(screenSize),
     anchor: Anchor.center,
     paint: Paint()..color = _getColor(hitsRequired),
   );

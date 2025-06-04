@@ -46,17 +46,18 @@ class CollisionSystem {
   }
 
   void checkBallWallCollision(Ball ball, Vector2 gameSize) {
-    if (ball.position.x <= ball.radius) {
-      _addImpactEffect(Vector2(ball.radius, ball.position.y), Colors.white);
-      ball.velocity = Vector2(-ball.velocity.x, ball.velocity.y);
-    } else if (ball.position.x >= gameSize.x - ball.radius) {
-      _addImpactEffect(Vector2(gameSize.x - ball.radius, ball.position.y), Colors.white);
-      ball.velocity = Vector2(-ball.velocity.x, ball.velocity.y);
+    final radius = ball.radius;
+    // Right boundary
+    if (ball.position.x >= gameSize.x - radius) {
+      ball.velocity = Vector2(-ball.velocity.x.abs(), ball.velocity.y);
     }
-
-    if (ball.position.y <= ball.radius) {
-      _addImpactEffect(Vector2(ball.position.x, ball.radius), Colors.white);
-      ball.velocity = Vector2(ball.velocity.x, -ball.velocity.y);
+    // Left boundary
+    else if (ball.position.x <= radius) {
+      ball.velocity = Vector2(ball.velocity.x.abs(), ball.velocity.y);
+    }
+    // Top boundary
+    if (ball.position.y <= radius) {
+      ball.velocity = Vector2(ball.velocity.x, ball.velocity.y.abs());
     }
   }
 

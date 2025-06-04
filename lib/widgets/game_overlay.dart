@@ -14,7 +14,11 @@ const _textStyle = TextStyle(
   color: Colors.white,
 );
 
-const _buttonStyle = TextStyle(fontSize: 24);
+const _buttonStyle = TextStyle(
+  fontSize: 24,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
 
 const _buttonPadding = EdgeInsets.symmetric(horizontal: 40, vertical: 15);
 
@@ -36,9 +40,9 @@ class BaseOverlay extends StatelessWidget {
       child: Center(
         child: Container(
           width: width,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(25),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.8),
+            color: Colors.black.withOpacity(0.85),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -92,9 +96,16 @@ class OverlayButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         padding: _buttonPadding,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        elevation: 8,
       ),
       onPressed: onPressed,
-      child: Text(text, style: _buttonStyle),
+      child: Text(
+        text,
+        style: _buttonStyle,
+      ),
     );
   }
 }
