@@ -14,7 +14,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Brick Breaker',
-      theme: ThemeData.dark(),
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.blue,
+          accentColor: Colors.green,
+          brightness: Brightness.dark,
+        ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          titleMedium: TextStyle(fontSize: 24),
+          bodyLarge: TextStyle(fontSize: 20),
+        ),
+      ),
       home: const GameScreen(),
     );
   }
@@ -43,6 +55,8 @@ class _GameScreenState extends State<GameScreen> {
         game: game,
         overlayBuilderMap: {
           'GameOver': (context, _) => GameOverOverlay(game),
+          'LevelComplete': (context, _) => LevelCompleteOverlay(game),
+          'GameWon': (context, _) => GameWonOverlay(game),
         },
       ),
     );

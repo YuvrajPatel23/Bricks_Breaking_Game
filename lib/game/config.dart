@@ -26,4 +26,8 @@ class GameConfig {
     Colors.green,
     Colors.blue,
   ];
+
+  // Level configuration
+  static const int totalLevels = 3;
+  static const double levelCompletionFireworkCount = 50;
 }

@@ -18,6 +18,7 @@ class CollisionSystem {
   CollisionSystem(this.game);
 
   void _addImpactEffect(Vector2 position, Color color) {
+    // game.playSound('impact'); //uncomment after adding sound
     final particle = Particle.generate(
       count: 10,
       lifespan: 0.5,

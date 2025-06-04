@@ -28,18 +28,19 @@ class Brick extends RectangleComponent {
   Future<void> breakBrick() async {
     final game = findParent<BrickBreakerGame>()!;
 
+    // Enhanced break effect
     game.add(ParticleSystemComponent(
       particle: Particle.generate(
-        count: 20,
+        count: 25 + hitsRequired * 5,  // More particles for stronger bricks
         generator: (i) => AcceleratedParticle(
           acceleration: Vector2(0, 200),
           speed: Vector2(
-            (_random.nextDouble() * 200) * (_random.nextBool() ? 1 : -1),
-            (_random.nextDouble() * 200) * (_random.nextBool() ? 1 : -1),
+            (_random.nextDouble() * 300) * (_random.nextBool() ? 1 : -1),
+            (_random.nextDouble() * 300) * (_random.nextBool() ? 1 : -1),
           ),
           position: position.clone(),
           child: CircleParticle(
-            radius: 1 + _random.nextDouble() * 3,
+            radius: 1 + _random.nextDouble() * (1 + hitsRequired * 0.5),
             paint: Paint()..color = paint!.color,
           ),
         ),
